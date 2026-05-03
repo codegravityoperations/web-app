@@ -4,7 +4,6 @@ version: 0.2
 env:
   variables:
     S3_BUCKET: "codegravity-frontend-493499579914"
-    # Fill in your CloudFront distribution ID after Step 2
     CLOUDFRONT_DISTRIBUTION_ID: "E39C3TEOSVZ6FJ"
 
 phases:
@@ -19,39 +18,24 @@ phases:
   pre_build:
     commands:
       - echo "Installing dependencies..."
-      # npm ci = exact versions from package-lock.json
-      # faster and stricter than npm install — standard in CI
       - npm ci
 
   build:
     commands:
       - echo "Building React app..."
       - npm run build
-      # Vite outputs to /dist by default
       - echo "Build complete. Contents of dist:"
       - ls -la dist/
 
   post_build:
     commands:
-      # Sync dist/ to S3
-      # --delete removes files in S3 that no longer exist in dist/
-      # This prevents stale files serving old JS/CSS chunks
       - echo "Deploying to S3..."
       - aws s3 sync dist/ s3://$S3_BUCKET --delete
-
-      # Invalidate CloudFront cache
-      # Without this, users get cached old files for up to 24hrs
-      # /* invalidates everything — fine for small apps
       - echo "Invalidating CloudFront cache..."
-      - aws cloudfront create-invalidation
-        --distribution-id $CLOUDFRONT_DISTRIBUTION_ID
-        --paths "/*"
-
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
       - echo "Deployment complete at $(date)"
-      - echo "Site live at: https://$(aws cloudfront get-distribution --id $CLOUDFRONT_DISTRIBUTION_ID --query 'Distribution.DomainName' --output text)"
+      - echo "Site live at https://$(aws cloudfront get-distribution --id $CLOUDFRONT_DISTRIBUTION_ID --query 'Distribution.DomainName' --output text)"
 
-# No artifacts needed — CodeBuild deploys directly to S3
-# No imagedefinitions.json either — this isn't ECS
 artifacts:
   files:
     - "**/*"
