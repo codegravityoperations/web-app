@@ -500,6 +500,7 @@ const Dashboard = ({auth, onLogout}) => {
       // POST /api/auth/logout  (requires Bearer token)
       await apiFetch(API.logout, { auth: true });
     } catch(_) {
+      setApiError(_.message || "Logout failed. System Issue.");
       // logout best-effort — clear tokens regardless
     } finally {
       clearTokens();
