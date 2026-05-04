@@ -1,14 +1,14 @@
 import { useState } from "react";
 
 // ─── API CONFIG ───────────────────────────────────────────────────────────────
-const BASE_URL = "https://54.91.197.157:8080";
+//const BASE_URL = "https://54.91.197.157:8080";
 
 const API = {
-  login:            `${BASE_URL}/api/auth/login`,
-  logout:           `${BASE_URL}/api/auth/logout`,
-  refresh:          `${BASE_URL}/api/auth/refresh`,
-  registerEmployee: `${BASE_URL}/api/employees/register`,
-  registerCandidate:`${BASE_URL}/api/candidates/register`,
+  login:             `/api/auth/login`,
+  logout:            `/api/auth/logout`,
+  refresh:           `/api/auth/refresh`,
+  registerEmployee:  `/api/employees/register`,
+  registerCandidate: `/api/candidates/register`,
 };
 
 // ─── TOKEN HELPERS ────────────────────────────────────────────────────────────
