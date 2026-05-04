@@ -21,7 +21,7 @@ const clearTokens = () => {
   localStorage.removeItem("refreshToken");
 };
 const getAccessToken  = () => localStorage.getItem("accessToken");
-const getRefreshToken = () => localStorage.getItem("refreshToken");
+//const getRefreshToken = () => localStorage.getItem("refreshToken");
 
 // ─── GENERIC API CALL ─────────────────────────────────────────────────────────
 async function apiFetch(url, { method = "POST", body, auth = false } = {}) {
@@ -499,7 +499,7 @@ const Dashboard = ({auth, onLogout}) => {
     try {
       // POST /api/auth/logout  (requires Bearer token)
       await apiFetch(API.logout, { auth: true });
-    } catch(_) {
+    } catch{
       // logout best-effort — clear tokens regardless
     } finally {
       clearTokens();
