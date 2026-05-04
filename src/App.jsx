@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // ─── API CONFIG ───────────────────────────────────────────────────────────────
-const BASE_URL = "http://52.54.52.163:8080";
+const BASE_URL = "https://54.91.197.157:8080";
 
 const API = {
   login:            `${BASE_URL}/api/auth/login`,
