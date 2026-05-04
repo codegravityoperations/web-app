@@ -21,7 +21,7 @@ const clearTokens = () => {
   localStorage.removeItem("refreshToken");
 };
 const getAccessToken  = () => localStorage.getItem("accessToken");
-const getRefreshToken = () => localStorage.getItem("refreshToken");
+//const getRefreshToken = () => localStorage.getItem("refreshToken");
 
 // ─── GENERIC API CALL ─────────────────────────────────────────────────────────
 async function apiFetch(url, { method = "POST", body, auth = false } = {}) {
