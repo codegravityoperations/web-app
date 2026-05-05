@@ -1,4 +1,18 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api"
+const normalizeApiBaseUrl = (value) => {
+  const raw = (value || "").trim()
+  if (!raw) return "/api"
+  if (raw.startsWith("/")) return raw.replace(/\/$/, "")
+
+  const cleaned = raw
+    .replace(/^(https?:)?\/\//, "")
+    .replace(/^(https?:)?\/\//, "")
+    .replace(/^\/+/, "")
+
+  const scheme = raw.toLowerCase().startsWith("https") ? "https://" : raw.toLowerCase().startsWith("http") ? "http://" : "https://"
+  return `${scheme}${cleaned}`.replace(/\/$/, "")
+}
+
+const API_BASE_URL = normalizeApiBaseUrl(import.meta.env.VITE_API_BASE_URL)
 const API_BASE = API_BASE_URL.replace(/\/$/, "")
 const buildApiUrl = (path) => `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`
 
