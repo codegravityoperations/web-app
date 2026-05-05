@@ -1,43 +1,5 @@
 import { useState } from "react";
-
-// ─── API CONFIG ───────────────────────────────────────────────────────────────
-//const BASE_URL = "https://54.91.197.157:8080";
-
-const API = {
-  login:             `/api/auth/login`,
-  logout:            `/api/auth/logout`,
-  refresh:           `/api/auth/refresh`,
-  registerEmployee:  `/api/employees/register`,
-  registerCandidate: `/api/candidates/register`,
-};
-
-// ─── TOKEN HELPERS ────────────────────────────────────────────────────────────
-const saveTokens = (access, refresh) => {
-  localStorage.setItem("accessToken",  access);
-  localStorage.setItem("refreshToken", refresh);
-};
-const clearTokens = () => {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-};
-const getAccessToken  = () => localStorage.getItem("accessToken");
-//const getRefreshToken = () => localStorage.getItem("refreshToken");
-
-// ─── GENERIC API CALL ─────────────────────────────────────────────────────────
-async function apiFetch(url, { method = "POST", body, auth = false } = {}) {
-  const headers = { "Content-Type": "application/json" };
-  if (auth) {
-    const token = getAccessToken();
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-  }
-  const res = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined });
-  const json = await res.json().catch(() => ({}));
-  // Backend wraps everything in { success, message, data, timestamp }
-  if (!res.ok || json.success === false) {
-    throw new Error(json.message || `Request failed (${res.status})`);
-  }
-  return json; // { success, message, data, timestamp }
-}
+import { API, apiFetch, saveTokens, clearTokens } from "./apiClient";
 
 // ─── VALIDATION ───────────────────────────────────────────────────────────────
 const validateReg = (fields, isCandidate) => {
