@@ -44,7 +44,7 @@ const Logo = () => (
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     </div>
-    <span style={{fontSize:13,fontWeight:600,color:"#374151",fontFamily:"'DM Sans',sans-serif"}}>IT Consultancy Portal</span>
+    <span style={{fontSize:13,fontWeight:600,color:"#374151",fontFamily:"'DM Sans',sans-serif"}}>Code Gravity Consultancy Portal</span>
   </div>
 );
 
@@ -238,7 +238,7 @@ const LoginScreen = ({onLogin, onGoRegister}) => {
         </div>
         <FooterLink text="Don't have an account?" linkText="Register here" onClick={onGoRegister}/>
       </Card>
-      <p style={{textAlign:"center",marginTop:20,fontSize:12,color:"#d1d5db"}}>© 2025 IT Consultancy Portal · Phase 1</p>
+      <p style={{textAlign:"center",marginTop:20,fontSize:12,color:"#d1d5db"}}>© 2025 Code Gravity Consultancy Portal · Phase 1</p>
     </PageWrap>
   );
 };
@@ -447,7 +447,7 @@ const RegistrationScreen = ({onGoLogin}) => {
 
         {!success && <FooterLink text="Already have an account?" linkText="Sign in" onClick={onGoLogin}/>}
       </Card>
-      <p style={{textAlign:"center",marginTop:20,fontSize:12,color:"#d1d5db"}}>© 2025 IT Consultancy Portal · Phase 1 Registration</p>
+      <p style={{textAlign:"center",marginTop:20,fontSize:12,color:"#d1d5db"}}>© 2025 Code Gravity Consultancy Portal · Phase 1 Registration</p>
     </PageWrap>
   );
 };
