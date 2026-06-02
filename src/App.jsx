@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { API, apiFetch, saveTokens, clearTokens } from "./apiClient";
+import CandidateRegistrationForm from "./features/candidate-registration/CandidateRegistrationForm";
 
 // ─── VALIDATION ───────────────────────────────────────────────────────────────
 const validateReg = (fields, isCandidate) => {
