@@ -22,6 +22,7 @@ export const API = {
   refresh:           buildApiUrl("/auth/refresh"),
   registerEmployee:  buildApiUrl("/employees/register"),
   registerCandidate: buildApiUrl("/candidates/register"),
+  candidates:        buildApiUrl("/candidates"),
 }
 
 const storageKey = {
@@ -59,3 +60,23 @@ export async function apiFetch(url, { method = "POST", body, auth = false } = {}
 
   return json
 }
+
+export const getUserRoleFromToken = () => {
+  const token = getAccessToken();
+
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+
+    return (
+      payload.role ||
+      payload.roles ||
+      payload.authority ||
+      payload.authorities ||
+      null
+    );
+  } catch (error) {
+    return null;
+  }
+};
