@@ -1,0 +1,300 @@
+.admin-candidates-page {
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.admin-candidates-header {
+  margin-bottom: 24px;
+}
+
+.admin-candidates-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #5b5ce6;
+}
+
+.admin-candidates-header p {
+  margin-top: 6px;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.candidate-table-container {
+  background: white;
+  border-radius: 18px;
+  overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(91, 92, 230, 0.12);
+}
+
+.candidate-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.candidate-table thead {
+  background: linear-gradient(90deg, #5b5ce6 0%, #7c5cf0 100%);
+}
+
+.candidate-table th,
+.candidate-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.candidate-table th {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.candidate-table td {
+  font-size: 14px;
+  color: #374151;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.submitted {
+  background-color: #ede9fe;
+  color: #6d28d9;
+}
+
+.status-badge.approved {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.view-btn,
+.delete-btn {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.view-btn {
+  background: linear-gradient(90deg, #5b5ce6 0%, #7c5cf0 100%);
+  color: white;
+}
+
+.view-btn:hover {
+  opacity: 0.9;
+}
+
+.delete-btn {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.delete-btn:hover {
+  background-color: #fecaca;
+}
+
+.candidate-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 260px;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #7c5cf0;
+  box-shadow: 0 0 0 3px rgba(124, 92, 240, 0.15);
+}
+
+.status-filter {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  min-width: 180px;
+  outline: none;
+}
+
+.status-filter:focus {
+  border-color: #7c5cf0;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+}
+
+.pagination button {
+  border: none;
+  padding: 9px 16px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #5b5ce6 0%, #7c5cf0 100%);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.forbidden-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #374151;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+.forbidden-page h1 {
+  font-size: 72px;
+  color: #5b5ce6;
+  margin: 0;
+}
+
+.forbidden-page p {
+  font-size: 18px;
+}
+
+@media (max-width: 1024px) {
+  .candidate-table th,
+  .candidate-table td {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .view-btn,
+  .delete-btn {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+}
+
+/* Status badge*/
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.status-badge.pending {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.status-badge.approved {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status-badge.rejected {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.status-badge.submitted {
+  background-color: #ede9fe;
+  color: #6d28d9;
+}
+
+.candidate-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.candidate-table td,
+.candidate-table th {
+  word-break: break-word;
+}
+
+.candidate-table td {
+  font-size: 14px;
+  color: #374151;
+  vertical-align: middle;
+}
+
+@media (max-width: 768px) {
+  .admin-candidates-page {
+    padding: 16px;
+  }
+
+  .candidate-controls {
+    flex-direction: column;
+  }
+
+  .search-input,
+  .status-filter {
+    width: 100%;
+  }
+
+  .candidate-table th,
+  .candidate-table td {
+    white-space: nowrap;
+  }
+
+  .pagination {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-candidates-header h1 {
+    font-size: 24px;
+  }
+
+  .candidate-table-container {
+    border-radius: 12px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .view-btn,
+  .delete-btn {
+    width: 100%;
+  }
+}

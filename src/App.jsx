@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { API, apiFetch, saveTokens, clearTokens } from "./apiClient";
 import CandidateRegistrationForm from "./features/candidate-registration/CandidateRegistrationForm";
+import AdminCandidates from "./features/admin-candidates/AdminCandidates";
 
 // ─── VALIDATION ───────────────────────────────────────────────────────────────
 const validateReg = (fields, isCandidate) => {
