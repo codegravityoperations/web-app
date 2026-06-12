@@ -76,7 +76,7 @@ export const getUserRoleFromToken = () => {
       payload.authorities ||
       null
     );
-  } catch (error) {
+  } catch {
     return null;
   }
 };

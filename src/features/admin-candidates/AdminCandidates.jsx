@@ -6,7 +6,7 @@ import { getUserRoleFromToken } from "../../apiClient";
 const pageSize = 5;
 
 function AdminCandidates() {
- // const userRole = getUserRoleFromToken();
+  const userRole = getUserRoleFromToken();
 
   const [candidatesData, setCandidatesData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,7 +16,57 @@ function AdminCandidates() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const isAuthorizedEmployee =
+  userRole === "ROLE_EMPLOYEE" || userRole === "ROLE_ADMIN";
+  const isUnauthorized = !isAuthorizedEmployee;
   
+  useEffect(() => {
+    if (isUnauthorized) return;
+
+    let isMounted = true;
+
+    const loadCandidates = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const data = await getCandidates({
+          page: currentPage,
+          pageSize,
+          search: searchTerm,
+          status: statusFilter,
+        });
+
+        const candidatePage = data.data || data;
+
+        if (!isMounted) return;
+
+        if (Array.isArray(candidatePage)) {
+          setCandidatesData(candidatePage);
+          setTotalPages(1);
+        } else {
+          setCandidatesData(candidatePage.content || candidatePage.candidates || []);
+          setTotalPages(candidatePage.totalPages || 1);
+        }
+      } catch {
+        if (!isMounted) return;
+
+        setError("Failed to load candidates.");
+        setCandidatesData([]);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadCandidates();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentPage, searchTerm, statusFilter, isUnauthorized]);
+
   if (!userRole) {
     return (
       <div className="forbidden-page">
@@ -26,7 +76,7 @@ function AdminCandidates() {
     );
   }
 
-  if (userRole === "CANDIDATE" || userRole?.includes?.("CANDIDATE")) {
+  if (isUnauthorized) {
     return (
       <div className="forbidden-page">
         <h1>403</h1>
@@ -35,47 +85,6 @@ function AdminCandidates() {
     );
   }
 
-
-  useEffect(() => {
-    fetchCandidates();
-  }, [currentPage, searchTerm, statusFilter]);
-
-  const fetchCandidates = async () => {
-    console.log("fetchCandidates called");
-
-    try {
-      setLoading(true);
-      setError("");
-
-      const data = await getCandidates({
-        page: currentPage,
-        pageSize,
-        search: searchTerm,
-        status: statusFilter,
-      });
-  const candidatePage = data.data || data;
-
-  if (Array.isArray(candidatePage)) {
-    setCandidatesData(candidatePage);
-    setTotalPages(1);
-  } 
-  else {
-    setCandidatesData(
-      candidatePage.content ||
-      candidatePage.candidates ||
-      []
-    );
-
-    setTotalPages(candidatePage.totalPages || 1);
-  }
-
-    } catch (err) {
-      setError("Failed to load candidates.");
-      setCandidatesData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleViewDetails = (candidate) => {
     alert(
