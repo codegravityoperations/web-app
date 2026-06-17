@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./AdminCandidates.css";
 import { getCandidates } from "../../services/candidateService";
 import { getUserRoleFromToken } from "../../apiClient";
+import useDebounce from '../../hooks/useDebounce';
 
 const pageSize = 5;
 
@@ -10,6 +11,7 @@ function AdminCandidates() {
 
   const [candidatesData, setCandidatesData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebounce(searchTerm, 500);
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -33,7 +35,7 @@ function AdminCandidates() {
         const data = await getCandidates({
           page: currentPage,
           pageSize,
-          search: searchTerm,
+          search: debouncedSearch,
           status: statusFilter,
         });
 
@@ -65,7 +67,7 @@ function AdminCandidates() {
     return () => {
       isMounted = false;
     };
-  }, [currentPage, searchTerm, statusFilter, isUnauthorized]);
+  }, [currentPage, debouncedSearch, statusFilter, isUnauthorized]);
 
   if (!userRole) {
     return (
@@ -105,6 +107,11 @@ function AdminCandidates() {
     setCurrentPage(1);
   };
 
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setCurrentPage(1);
+  };
+
   const handleStatusChange = (e) => {
     setStatusFilter(e.target.value);
     setCurrentPage(1);
@@ -120,13 +127,24 @@ function AdminCandidates() {
       </div>
 
       <div className="candidate-controls">
-        <input
-          type="text"
-          placeholder="Search by ID, name, email or phone"
-          className="search-input"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
+        <div className="search-wrapper">
+          <input
+            type="text"
+            placeholder="Search by ID, name, email or phone"
+            className="search-input"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          {searchTerm && (
+            <button
+              className="clear-search-btn"
+              onClick={handleClearSearch}
+              aria-label="Clear search"
+            >
+              ✕
+            </button>
+          )}
+        </div>
 
         <select
           className="status-filter"
@@ -161,7 +179,17 @@ function AdminCandidates() {
           <tbody>
             {!loading && candidatesData.length === 0 ? (
               <tr>
-                <td colSpan="7">No candidates found.</td>
+                <td colSpan="7" className="empty-state">
+                  <p>
+                    No candidates found
+                    {debouncedSearch ? ` for "${debouncedSearch}"` : ''}.
+                  </p>
+                  {debouncedSearch && (
+                    <button className="clear-search-btn" onClick={handleClearSearch}>
+                      Clear Search
+                    </button>
+                  )}
+                </td>
               </tr>
             ) : (
               candidatesData.map((candidate) => (
