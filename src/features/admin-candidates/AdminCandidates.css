@@ -255,6 +255,39 @@
   vertical-align: middle;
 }
 
+/* Search wrapper — positions clear button inside input */
+.search-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.search-input {
+  padding-right: 2rem; /* space for the clear button */
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #888;
+  line-height: 1;
+}
+
+.clear-search-btn:hover {
+  color: #333;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
 @media (max-width: 768px) {
   .admin-candidates-page {
     padding: 16px;
