@@ -549,7 +549,7 @@ const Dashboard = ({auth, onLogout, onEditProfile}) => {
 
 // ─── APP ROOT ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const [screen, setScreen] = useState("editProfile");
+  const [screen, setScreen] = useState("login");
   const [authData, setAuthData] = useState(null);
 
   const handleLogin  = (auth) => { setAuthData(auth); setScreen("dashboard"); };
