@@ -22,6 +22,66 @@
   font-size: 15px;
 }
 
+/* ── Controls ── */
+.candidate-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.search-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 260px;
+  padding: 12px 36px 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #7c5cf0;
+  box-shadow: 0 0 0 3px rgba(124, 92, 240, 0.15);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #888;
+  line-height: 1;
+}
+
+.clear-search-btn:hover {
+  color: #333;
+}
+
+.status-filter {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  min-width: 180px;
+  outline: none;
+}
+
+.status-filter:focus {
+  border-color: #7c5cf0;
+  box-shadow: 0 0 0 3px rgba(124, 92, 240, 0.15);
+}
+
+/* ── Table ── */
 .candidate-table-container {
   background: white;
   border-radius: 18px;
@@ -32,6 +92,7 @@
 .candidate-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: auto;
 }
 
 .candidate-table thead {
@@ -43,6 +104,7 @@
   padding: 16px;
   text-align: left;
   border-bottom: 1px solid #e5e7eb;
+  word-break: break-word;
 }
 
 .candidate-table th {
@@ -54,25 +116,40 @@
 .candidate-table td {
   font-size: 14px;
   color: #374151;
+  vertical-align: middle;
 }
 
+/* ── Status Badges ── */
 .status-badge {
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.status-badge.registered {
+  background: rgba(99, 102, 241, 0.15);
+  color: #4f46e5;
 }
 
 .status-badge.submitted {
-  background-color: #ede9fe;
-  color: #6d28d9;
+  background: rgba(251, 191, 36, 0.15);
+  color: #b45309;
 }
 
-.status-badge.approved {
-  background-color: #dcfce7;
-  color: #15803d;
+.status-badge.updated {
+  background: rgba(52, 211, 153, 0.15);
+  color: #065f46;
 }
 
+.status-badge.deleted {
+  background: rgba(248, 113, 113, 0.15);
+  color: #dc2626;
+}
+
+/* ── Action Buttons ── */
 .action-buttons {
   display: flex;
   gap: 10px;
@@ -107,42 +184,58 @@
   background-color: #fecaca;
 }
 
-.candidate-controls {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+/* ── Loading / Empty / Error States ── */
+.table-status-cell {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #374151;
+  font-size: 0.875rem;
 }
 
-.search-input {
-  flex: 1;
-  min-width: 260px;
-  padding: 12px 14px;
+.table-status-cell p {
+  margin: 0 0 0.75rem;
+}
+
+.table-status-cell strong {
+  color: #5b5ce6;
+  font-weight: 600;
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #5b5ce6;
+  border-radius: 50%;
+  animation: cg-spin 0.7s linear infinite;
+  margin: 0 auto 0.75rem;
+}
+
+@keyframes cg-spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-state {
+  color: #dc2626;
+}
+
+.clear-filter-btn {
+  background: transparent;
   border: 1px solid #d1d5db;
-  border-radius: 10px;
-  font-size: 14px;
-  outline: none;
+  color: #5b5ce6;
+  padding: 0.375rem 1rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
 }
 
-.search-input:focus {
-  border-color: #7c5cf0;
-  box-shadow: 0 0 0 3px rgba(124, 92, 240, 0.15);
+.clear-filter-btn:hover {
+  background: rgba(91, 92, 230, 0.08);
+  border-color: #5b5ce6;
 }
 
-.status-filter {
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-  min-width: 180px;
-  outline: none;
-}
-
-.status-filter:focus {
-  border-color: #7c5cf0;
-}
-
+/* ── Pagination ── */
 .pagination {
   margin-top: 20px;
   display: flex;
@@ -173,6 +266,7 @@
   font-weight: 600;
 }
 
+/* ── Forbidden Page ── */
 .forbidden-page {
   min-height: 100vh;
   display: flex;
@@ -194,6 +288,7 @@
   font-size: 18px;
 }
 
+/* ── Responsive ── */
 @media (max-width: 1024px) {
   .candidate-table th,
   .candidate-table td {
@@ -206,86 +301,6 @@
     padding: 7px 12px;
     font-size: 12px;
   }
-}
-
-/* Status badge*/
-.status-badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
-  text-transform: uppercase;
-}
-
-.status-badge.pending {
-  background-color: #fef3c7;
-  color: #b45309;
-}
-
-.status-badge.approved {
-  background-color: #dcfce7;
-  color: #15803d;
-}
-
-.status-badge.rejected {
-  background-color: #fee2e2;
-  color: #dc2626;
-}
-
-.status-badge.submitted {
-  background-color: #ede9fe;
-  color: #6d28d9;
-}
-
-.candidate-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: auto;
-}
-
-.candidate-table td,
-.candidate-table th {
-  word-break: break-word;
-}
-
-.candidate-table td {
-  font-size: 14px;
-  color: #374151;
-  vertical-align: middle;
-}
-
-/* Search wrapper — positions clear button inside input */
-.search-wrapper {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-}
-
-.search-input {
-  padding-right: 2rem; /* space for the clear button */
-}
-
-.clear-search-btn {
-  position: absolute;
-  right: 0.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.85rem;
-  color: #888;
-  line-height: 1;
-}
-
-.clear-search-btn:hover {
-  color: #333;
-}
-
-/* Empty state */
-.empty-state {
-  text-align: center;
-  padding: 2rem;
-  color: #666;
 }
 
 @media (max-width: 768px) {
