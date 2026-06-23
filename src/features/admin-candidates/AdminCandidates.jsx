@@ -5,9 +5,13 @@ import { getUserRoleFromToken } from "../../apiClient";
 import useDebounce from '../../hooks/useDebounce';
 
 const pageSize = 5;
+const USE_MOCK = true; //flip to false for real backend data
 
 function AdminCandidates() {
   const userRole = getUserRoleFromToken();
+  // ADD THESE — open browser console and check
+  console.log("USE_MOCK:", USE_MOCK);
+  console.log("userRole:", userRole);
 
   const [candidatesData, setCandidatesData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,21 +20,21 @@ function AdminCandidates() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   const isAuthorizedEmployee =
   userRole === "ROLE_EMPLOYEE" || userRole === "ROLE_ADMIN";
   const isUnauthorized = !isAuthorizedEmployee;
   
   useEffect(() => {
-    if (isUnauthorized) return;
+    if (!USE_MOCK && isUnauthorized) return;
 
     let isMounted = true;
 
     const loadCandidates = async () => {
       try {
         setLoading(true);
-        setError("");
+        setError(null);
 
         const data = await getCandidates({
           page: currentPage,
@@ -69,7 +73,8 @@ function AdminCandidates() {
     };
   }, [currentPage, debouncedSearch, statusFilter, isUnauthorized]);
 
-  if (!userRole) {
+// ── Auth Guards ──
+  if (!USE_MOCK && !userRole) {
     return (
       <div className="forbidden-page">
         <h1>403</h1>
@@ -78,7 +83,7 @@ function AdminCandidates() {
     );
   }
 
-  if (isUnauthorized) {
+  if (!USE_MOCK && isUnauthorized) {
     return (
       <div className="forbidden-page">
         <h1>403</h1>
@@ -152,15 +157,12 @@ function AdminCandidates() {
           onChange={handleStatusChange}
         >
           <option value="">All Status</option>
-          <option value="Submitted">Submitted</option>
-          <option value="Approved">Approved</option>
-          <option value="Rejected">Rejected</option>
+          <option value="REGISTERED">Registered</option>
+          <option value="SUBMITTED">Submitted</option>
+          <option value="UPDATED">Updated</option>
+          <option value="DELETED">Deleted</option>
         </select>
       </div>
-
-      {loading && <p>Loading candidates...</p>}
-
-      {error && <p className="error-text">{error}</p>}
 
       <div className="candidate-table-container">
         <table className="candidate-table">
@@ -177,21 +179,72 @@ function AdminCandidates() {
           </thead>
 
           <tbody>
-            {!loading && candidatesData.length === 0 ? (
+            {loading ? (
+              // AC 7 — Loading state inside table
               <tr>
-                <td colSpan="7" className="empty-state">
-                  <p>
-                    No candidates found
-                    {debouncedSearch ? ` for "${debouncedSearch}"` : ''}.
-                  </p>
-                  {debouncedSearch && (
-                    <button className="clear-search-btn" onClick={handleClearSearch}>
-                      Clear Search
-                    </button>
+                <td colSpan="7" className="table-status-cell">
+                  <div className="loading-spinner" />
+                  <p>Loading candidates...</p>
+                </td>
+              </tr>
+
+            ) : error ? (
+              // Error state inside table
+              <tr>
+                <td colSpan="7" className="table-status-cell error-state">
+                  <p>{error}</p>
+                </td>
+              </tr>
+
+            ) : candidatesData.length === 0 ? (
+              // AC 8 — Empty state: 4 scenarios
+              <tr>
+                <td colSpan="7" className="table-status-cell empty-state">
+                  {debouncedSearch && statusFilter ? (
+                    // Both search + filter active
+                    <>
+                      <p>
+                        No candidates found for <strong>"{debouncedSearch}"</strong> with
+                        status <strong>{statusFilter}</strong>.
+                      </p>
+                      <button
+                        className="clear-filter-btn"
+                        onClick={() => {
+                          handleClearSearch();
+                          setStatusFilter("");
+                        }}
+                      >
+                        Clear All Filters
+                      </button>
+                    </>
+                  ) : debouncedSearch ? (
+                    // Only search active
+                    <>
+                      <p>No candidates found for <strong>"{debouncedSearch}"</strong>.</p>
+                      <button className="clear-filter-btn" onClick={handleClearSearch}>
+                        Clear Search
+                      </button>
+                    </>
+                  ) : statusFilter ? (
+                    // Only status filter active
+                    <>
+                      <p>No candidates with status <strong>{statusFilter}</strong>.</p>
+                      <button
+                        className="clear-filter-btn"
+                        onClick={() => setStatusFilter("")}
+                      >
+                        Clear Filter
+                      </button>
+                    </>
+                  ) : (
+                    // No filters, genuinely empty
+                    <p>No candidates found.</p>
                   )}
                 </td>
               </tr>
+
             ) : (
+              // Data rows — unchanged
               candidatesData.map((candidate) => (
                 <tr key={candidate.id || candidate.candidateId}>
                   <td>{candidate.id || candidate.candidateId}</td>
@@ -199,9 +252,7 @@ function AdminCandidates() {
                   <td>{candidate.email || candidate.emailAddress}</td>
                   <td>{candidate.phone || candidate.phoneNumber}</td>
                   <td>
-                    <span
-                      className={`status-badge ${candidate.status?.toLowerCase()}`}
-                    >
+                    <span className={`status-badge ${candidate.status?.toLowerCase()}`}>
                       {candidate.status}
                     </span>
                   </td>
@@ -213,7 +264,6 @@ function AdminCandidates() {
                     >
                       View Details
                     </button>
-
                     <button
                       className="delete-btn"
                       onClick={() => handleDelete(candidate.id)}
