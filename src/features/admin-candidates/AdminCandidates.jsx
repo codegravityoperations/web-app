@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import "./AdminCandidates.css";
-import { getCandidates } from "../../services/candidateService";
+import { getCandidates, deleteCandidate } from "../../services/candidateService";
 import { getUserRoleFromToken } from "../../apiClient";
 
 const pageSize = 5;
@@ -92,12 +91,25 @@ function AdminCandidates() {
     );
   };
 
-  const handleDelete = (candidateId) => {
-    const updatedCandidates = candidatesData.filter(
-      (candidate) => candidate.id !== candidateId
+  const handleDelete = async (candidate) => {
+    const candidateId = candidate.id || candidate.candidateId;
+    const candidateName = candidate.fullName || candidate.name || "this candidate";
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${candidateName} (${candidateId})?`
     );
 
-    setCandidatesData(updatedCandidates);
+    if (!confirmed) return;
+
+    try {
+      await deleteCandidate(candidateId);
+
+      setCandidatesData((prev) =>
+        prev.filter((c) => (c.id || c.candidateId) !== candidateId)
+      );
+    } catch (error) {
+      alert(`Failed to delete ${candidateName} (${candidateId}).`);
+    }
   };
 
   const handleSearchChange = (e) => {
@@ -188,7 +200,7 @@ function AdminCandidates() {
 
                     <button
                       className="delete-btn"
-                      onClick={() => handleDelete(candidate.id)}
+                      onClick={() => handleDelete(candidate)}
                     >
                       Delete
                     </button>

@@ -25,3 +25,16 @@ export async function getCandidates({ page, pageSize, search, status }) {
 
   return response.json();
 }
+
+export async function deleteCandidate(candidateId) {
+  const response = await fetch(`${API.candidates}/${candidateId}`, {
+    method: "DELETE",
+    auth: true,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete candidate");
+  }
+
+  return true;
+}
