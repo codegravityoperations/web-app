@@ -1,0 +1,1 @@
+export const FONTS = "https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap";
