@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./AdminCandidates.css";
 import { getCandidates } from "../../services/candidateService";
 import { getUserRoleFromToken } from "../../apiClient";
@@ -8,6 +9,7 @@ const pageSize = 5;
 const USE_MOCK = true; //flip to false for real backend data
 
 function AdminCandidates() {
+  const navigate = useNavigate();
   const userRole = getUserRoleFromToken();
   // ADD THESE — open browser console and check
   console.log("USE_MOCK:", USE_MOCK);
@@ -94,9 +96,7 @@ function AdminCandidates() {
 
 
   const handleViewDetails = (candidate) => {
-    alert(
-      `Candidate Details\n\nName: ${candidate.fullName}\nEmail: ${candidate.email}\nPhone: ${candidate.phoneNumber}`
-    );
+    navigate(`/admin/candidates/${candidate.id || candidate.candidateId}`);
   };
 
   const handleDelete = (candidateId) => {
