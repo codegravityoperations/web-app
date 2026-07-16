@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./EditCandidateProfile.css";
 
 const dummyCandidate = {
   candidateId: "CG1001",
