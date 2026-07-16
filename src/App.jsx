@@ -3,6 +3,7 @@ import { API, apiFetch, saveTokens, clearTokens } from "./apiClient";
 import CandidateRegistrationForm from "./features/candidate-registration/CandidateRegistrationForm";
 import AdminCandidates from "./features/admin-candidates/AdminCandidates";
 import EditCandidateProfile from "./features/candidate-registration/EditCandidateProfile";
+import CandidateLandingPage from "./features/candidate-dashboard/CandidateLandingPage";
 import "./App.css";
 
 // ─── VALIDATION ───────────────────────────────────────────────────────────────
@@ -549,20 +550,66 @@ const Dashboard = ({auth, onLogout, onEditProfile}) => {
 
 // ─── APP ROOT ─────────────────────────────────────────────────────────────────
 export default function App() {
+
   const [screen, setScreen] = useState("login");
   const [authData, setAuthData] = useState(null);
 
-  const handleLogin  = (auth) => { setAuthData(auth); setScreen("dashboard"); };
+  const handleLogin = (auth) => {
+    setAuthData(auth);
+
+    const userType = auth?.userType?.toUpperCase();
+    const role = auth?.role?.toUpperCase();
+
+    if (
+      userType === "CANDIDATE" ||
+      role === "ROLE_CANDIDATE"
+    ) {
+      setScreen("candidateLanding");
+    } else {
+      setScreen("dashboard");
+    }
+  };
   const handleLogout = ()     => { setAuthData(null); setScreen("login"); };
 
   return (
     <>
       <style>{ANIMATIONS}</style>
       <link href={FONTS} rel="stylesheet"/>
-      {screen==="login"     && <LoginScreen      onLogin={handleLogin}  onGoRegister={()=>setScreen("register")}/>}
-      {screen==="register"  && <RegistrationScreen                       onGoLogin={()=>setScreen("login")}/>}
-      {screen==="dashboard" && <Dashboard        auth={authData}        onLogout={handleLogout}        onEditProfile={() => setScreen("editProfile")}/>}
-      {screen==="editProfile" && <EditCandidateProfile        onBack={() => setScreen("dashboard")}/>}  
+
+      {screen==="login" && (
+        <LoginScreen
+          onLogin={handleLogin}
+          onGoRegister={()=>setScreen("register")}
+        />
+      )}
+
+      {screen==="register" && (
+        <RegistrationScreen
+          onGoLogin={()=>setScreen("login")}
+        />
+      )}
+
+      {screen==="candidateLanding" && (
+        <CandidateLandingPage
+          auth={authData}
+          onLogout={handleLogout}
+          onEditProfile={()=>setScreen("editProfile")}
+        />
+      )}
+
+      {screen==="dashboard" && (
+        <Dashboard
+          auth={authData}
+          onLogout={handleLogout}
+          onEditProfile={()=>setScreen("editProfile")}
+        />
+      )}
+
+      {screen==="editProfile" && (
+        <EditCandidateProfile
+          onBack={()=>setScreen("candidateLanding")}
+        />
+      )}
     </>
   );
 }

@@ -107,7 +107,7 @@ function AdminCandidates() {
       setCandidatesData((prev) =>
         prev.filter((c) => (c.id || c.candidateId) !== candidateId)
       );
-    } catch (error) {
+    } catch {
       alert(`Failed to delete ${candidateName} (${candidateId}).`);
     }
   };

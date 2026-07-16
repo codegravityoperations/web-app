@@ -57,22 +57,21 @@ export default function EditCandidateProfile({onBack}) {
 
   return (
     <div className="candidate-form-container">
-
         <button
-        type="button"
-        onClick={onBack}
-        style={{
-            marginBottom: "20px",
-            padding: "10px 16px",
-            cursor: "pointer"
-        }}
+            type="button"
+            onClick={onBack}
+            style={{
+                marginBottom: "20px",
+                padding: "10px 16px",
+                cursor: "pointer"
+            }}
         >
-        Back to Dashboard
+            Back to Dashboard
         </button>
 
         <h2>Edit Candidate Profile</h2>
 
-      {successMessage && <p className="success-message">{successMessage}</p>}
+        {successMessage && <p className="success-message">{successMessage}</p>}
 
       <form onSubmit={handleSave} className="candidate-form">
         <label>Candidate ID</label>
