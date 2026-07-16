@@ -2,7 +2,7 @@ import { useState } from "react";
 import { API, apiFetch, clearTokens } from "../../apiClient";
 import { Logo, PageWrap, Card, Spinner } from "../../components/ui";
 
-const Dashboard = ({auth, onLogout, onEditProfile}) => {
+const Dashboard = ({auth, onLogout}) => {
   const [loggingOut, setLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -55,14 +55,7 @@ const Dashboard = ({auth, onLogout, onEditProfile}) => {
               </div>
             ))}
           </div>
-
-          {auth.userType === "CANDIDATE" && (
-            <button onClick={onEditProfile}
-              style={{width:"100%",padding:"13px",fontSize:15,fontWeight:600,fontFamily:"'DM Sans',sans-serif",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",color:"white",border:"none",borderRadius:10,cursor:"pointer",marginBottom:12}}>
-              Edit Profile
-            </button>
-          )}
-
+          
           <button onClick={handleLogout} disabled={loggingOut}
             style={{width:"100%",padding:"13px",fontSize:15,fontWeight:600,fontFamily:"'DM Sans',sans-serif",background:"white",color:"#6b7280",border:"1.5px solid #e5e7eb",borderRadius:10,cursor:loggingOut?"not-allowed":"pointer",opacity:loggingOut?0.6:1,transition:"all 0.2s",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}
             onMouseEnter={e=>{if(!loggingOut){e.currentTarget.style.borderColor="#d1d5db";e.currentTarget.style.color="#374151"}}}
