@@ -1,19 +1,29 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminCandidates.css";
-import { getCandidates } from "../../services/candidateService";
+import { getCandidates, deleteCandidate } from "../../services/candidateService";
 import { getUserRoleFromToken } from "../../apiClient";
 import useDebounce from '../../hooks/useDebounce';
 
 const pageSize = 5;
-const USE_MOCK = true; //flip to false for real backend data
+
+const formatDate = (value) => {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return `${date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  })}, ${date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  })}`;
+};
 
 function AdminCandidates() {
   const navigate = useNavigate();
   const userRole = getUserRoleFromToken();
-  // ADD THESE — open browser console and check
-  console.log("USE_MOCK:", USE_MOCK);
-  console.log("userRole:", userRole);
 
   const [candidatesData, setCandidatesData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,13 +33,15 @@ function AdminCandidates() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
 
   const isAuthorizedEmployee =
   userRole === "ROLE_EMPLOYEE" || userRole === "ROLE_ADMIN";
   const isUnauthorized = !isAuthorizedEmployee;
   
   useEffect(() => {
-    if (!USE_MOCK && isUnauthorized) return;
+    if (isUnauthorized) return;
 
     let isMounted = true;
 
@@ -76,7 +88,7 @@ function AdminCandidates() {
   }, [currentPage, debouncedSearch, statusFilter, isUnauthorized]);
 
 // ── Auth Guards ──
-  if (!USE_MOCK && !userRole) {
+  if (!userRole) {
     return (
       <div className="forbidden-page">
         <h1>403</h1>
@@ -85,7 +97,7 @@ function AdminCandidates() {
     );
   }
 
-  if (!USE_MOCK && isUnauthorized) {
+  if (isUnauthorized) {
     return (
       <div className="forbidden-page">
         <h1>403</h1>
@@ -96,15 +108,35 @@ function AdminCandidates() {
 
 
   const handleViewDetails = (candidate) => {
-    navigate(`/admin/candidates/${candidate.id || candidate.candidateId}`);
+    navigate(`/admin/candidates/${candidate.id || candidate.candidateId}`, {
+      state: { candidate },
+    });
   };
 
-  const handleDelete = (candidateId) => {
-    const updatedCandidates = candidatesData.filter(
-      (candidate) => candidate.id !== candidateId
-    );
+  const handleDelete = async (candidateId) => {
+    if (deletingId) return;
 
-    setCandidatesData(updatedCandidates);
+    const confirmed = window.confirm("Are you sure you want to delete this candidate?");
+    if (!confirmed) return;
+
+    setDeletingId(candidateId);
+    setDeleteError(null);
+
+    try {
+      await deleteCandidate(candidateId);
+
+      setCandidatesData((prev) =>
+        prev.map((candidate) =>
+          (candidate.id || candidate.candidateId) === candidateId
+            ? { ...candidate, status: "DELETED" }
+            : candidate
+        )
+      );
+    } catch {
+      setDeleteError("Failed to delete candidate. Please try again.");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const handleSearchChange = (e) => {
@@ -130,6 +162,12 @@ function AdminCandidates() {
           <p>View and manage submitted candidate records.</p>
         </div>
       </div>
+
+      {deleteError && (
+        <div className="delete-error-banner">
+          <p>{deleteError}</p>
+        </div>
+      )}
 
       <div className="candidate-controls">
         <div className="search-wrapper">
@@ -166,6 +204,15 @@ function AdminCandidates() {
 
       <div className="candidate-table-container">
         <table className="candidate-table">
+          <colgroup>
+            <col style={{ width: "170px" }} />
+            <col style={{ width: "140px" }} />
+            <col style={{ width: "190px" }} />
+            <col style={{ width: "120px" }} />
+            <col style={{ width: "130px" }} />
+            <col style={{ width: "195px" }} />
+            <col style={{ width: "240px" }} />
+          </colgroup>
           <thead>
             <tr>
               <th>Candidate ID</th>
@@ -247,16 +294,16 @@ function AdminCandidates() {
               // Data rows — unchanged
               candidatesData.map((candidate) => (
                 <tr key={candidate.id || candidate.candidateId}>
-                  <td>{candidate.id || candidate.candidateId}</td>
-                  <td>{candidate.name || candidate.fullName}</td>
-                  <td>{candidate.email || candidate.emailAddress}</td>
+                  <td title={candidate.id || candidate.candidateId}>{candidate.id || candidate.candidateId}</td>
+                  <td title={candidate.name || candidate.fullName}>{candidate.name || candidate.fullName}</td>
+                  <td title={candidate.email || candidate.emailAddress}>{candidate.email || candidate.emailAddress}</td>
                   <td>{candidate.phone || candidate.phoneNumber}</td>
                   <td>
                     <span className={`status-badge ${candidate.status?.toLowerCase()}`}>
                       {candidate.status}
                     </span>
                   </td>
-                  <td>{candidate.createdDate || candidate.createdAt}</td>
+                  <td>{formatDate(candidate.createdDate || candidate.createdAt)}</td>
                   <td className="action-buttons">
                     <button
                       className="view-btn"
@@ -266,9 +313,10 @@ function AdminCandidates() {
                     </button>
                     <button
                       className="delete-btn"
-                      onClick={() => handleDelete(candidate.id)}
+                      onClick={() => handleDelete(candidate.id || candidate.candidateId)}
+                      disabled={deletingId === (candidate.id || candidate.candidateId)}
                     >
-                      Delete
+                      {deletingId === (candidate.id || candidate.candidateId) ? "Deleting..." : "Delete"}
                     </button>
                   </td>
                 </tr>

@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { API, apiFetch, clearTokens } from "../../apiClient";
 import "./CandidateLandingPage.css";
 
 /**
@@ -16,10 +14,7 @@ import "./CandidateLandingPage.css";
 export default function CandidateLandingPage({
   auth = {},
   onEditProfile,
-  onLogout,
 }) {
-  const [loggingOut, setLoggingOut] = useState(false);
-
   /**
    * Login currently returns values such as:
    * email, businessId, userType, role, and tokenType.
@@ -37,31 +32,6 @@ export default function CandidateLandingPage({
   const candidateRole = auth.role || "ROLE_CANDIDATE";
   const candidateUserType = auth.userType || "CANDIDATE";
   const tokenType = auth.tokenType || "Bearer";
-
-  /**
-   * Log the user out through the backend.
-   *
-   * Tokens are cleared even if the backend logout request fails so the
-   * user is not left signed in locally.
-   */
-  const handleLogout = async () => {
-    if (loggingOut) {
-      return;
-    }
-
-    setLoggingOut(true);
-
-    try {
-      await apiFetch(API.logout, {
-        auth: true,
-      });
-    } catch (error) {
-      console.error("Logout request failed:", error);
-    } finally {
-      clearTokens();
-      onLogout?.();
-    }
-  };
 
   /**
    * Open the candidate edit-profile screen.
@@ -115,16 +85,6 @@ export default function CandidateLandingPage({
             <strong>{candidateName}</strong>
             <span title={candidateEmail}>{candidateEmail}</span>
           </div>
-
-          <button
-            type="button"
-            className="candidate-dashboard-logout"
-            onClick={handleLogout}
-            disabled={loggingOut}
-            aria-busy={loggingOut}
-          >
-            {loggingOut ? "Signing out..." : "Sign out"}
-          </button>
         </div>
       </header>
 
@@ -146,14 +106,6 @@ export default function CandidateLandingPage({
               up to date.
             </p>
           </div>
-
-          <button
-            type="button"
-            className="candidate-dashboard-edit-button"
-            onClick={handleEditProfile}
-          >
-            Edit Profile
-          </button>
         </section>
 
         {/* ===================================================
@@ -331,11 +283,12 @@ export default function CandidateLandingPage({
           </div>
 
           <div className="candidate-dashboard-actions-grid">
-            {/* Edit profile */}
+            {/* Update Document — not available yet */}
             <button
               type="button"
-              className="candidate-dashboard-action-card"
-              onClick={handleEditProfile}
+              className="candidate-dashboard-action-card disabled"
+              disabled
+              title="This feature is not available yet"
             >
               <div
                 className="candidate-dashboard-action-icon"
@@ -348,7 +301,7 @@ export default function CandidateLandingPage({
                   fill="none"
                 >
                   <path
-                    d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"
+                    d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"
                     stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
@@ -358,18 +311,11 @@ export default function CandidateLandingPage({
               </div>
 
               <div>
-                <h3>Edit Profile</h3>
+                <h3>Update Document</h3>
                 <p>
-                  Update your personal and contact information.
+                  This feature will be available in a future update.
                 </p>
               </div>
-
-              <span
-                className="candidate-dashboard-arrow"
-                aria-hidden="true"
-              >
-                →
-              </span>
             </button>
 
             {/* Applications endpoint/page is not available yet */}
