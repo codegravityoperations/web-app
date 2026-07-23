@@ -81,6 +81,12 @@
   box-shadow: 0 10px 22px rgba(99, 91, 255, 0.28);
 }
 
+.candidate-form button[type="submit"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
 .candidate-form-container > button {
   min-width: 145px;
   height: 46px;
@@ -101,6 +107,16 @@
   background: #ecfdf5;
   border: 1px solid #86efac;
   color: #15803d;
+  border-radius: 9px;
+  font-weight: 600;
+}
+
+.error-message {
+  margin-bottom: 20px;
+  padding: 12px;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
   border-radius: 9px;
   font-weight: 600;
 }

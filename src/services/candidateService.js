@@ -1,7 +1,7 @@
-import { API } from "../apiClient";
+import { API, apiFetch } from "../apiClient";
 
   // Mock Data for testing purpose
-    const USE_MOCK = true; // ← flip to false when testing against real backend
+    const USE_MOCK = false; // ← flip to false when testing against real backend
 
   const MOCK_CANDIDATES = [
     { id: "C001", name: "Alice Johnson",  email: "alice@email.com",  phone: "1234567890", status: "REGISTERED", createdDate: "2024-01-10" },
@@ -55,7 +55,7 @@ export const getCandidates = async ({ page, pageSize, search, status }) => {
       await new Promise((res) => setTimeout(res, 500)); // simulate network delay
       return applyMockFilters({ page, pageSize, search, status });
     }
-  
+
 
 // ── REAL API ──
   const params = new URLSearchParams();
@@ -71,14 +71,22 @@ export const getCandidates = async ({ page, pageSize, search, status }) => {
     params.append("status", status);
   }
 
-  const response = await fetch(`${API.candidates}?${params.toString()}`, {
+  return await apiFetch(`${API.candidates}?${params.toString()}`, {
     method: "GET",
     auth: true,
   });
+}
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch candidates");
+export const deleteCandidate = async (candidateId) => {
+  // ── MOCK MODE ──
+  if (USE_MOCK) {
+    await new Promise((res) => setTimeout(res, 300)); // simulate network delay
+    return { success: true };
   }
 
-  return response.json();
-}
+  // ── REAL API ──
+  return await apiFetch(`${API.candidates}/${candidateId}`, {
+    method: "DELETE",
+    auth: true,
+  });
+};

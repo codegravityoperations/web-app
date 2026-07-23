@@ -1,4 +1,4 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import { LoginScreen, RegistrationScreen } from "../features/auth";
 import { Dashboard } from "../features/dashboard";
 import CandidateLandingPage from "../features/candidate-dashboard";
@@ -140,11 +140,13 @@ export function ProfileRoute() {
 
 export function CandidateProfileRoute() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { role } = useAuth();
 
   return (
     <CandidateProfilePage
       userRole={role}
+      candidate={location.state?.candidate || null}
       onBack={() => navigate("/admin/candidates")}
     />
   );

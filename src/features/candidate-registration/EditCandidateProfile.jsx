@@ -1,24 +1,25 @@
 import { useState } from "react";
+import { useAuth } from "../../context/useAuth";
+import { API, apiFetch, getBusinessIdFromToken } from "../../apiClient";
 import "./EditCandidateProfile.css";
 
-const dummyCandidate = {
-  candidateId: "CG1001",
-  firstName: "Anjal",
-  lastName: "Bhattarai",
-  email: "anjal@test.com",
-  phoneNumber: "6155551234",
-  address: "123 Main St",
-  city: "Clarksville",
-  state: "TN",
-  zipCode: "37040",
-  country: "USA",
-  status: "SUBMITTED",
-  updatedAt: "2026-06-15T10:00:00Z",
-};
+const buildInitialFormData = (authData) => ({
+  candidateId: getBusinessIdFromToken() || "",
+  email: authData?.email || "",
+  phoneNumber: "",
+  address: "",
+  city: "",
+  state: "",
+  zipCode: "",
+  country: "",
+});
 
-export default function EditCandidateProfile({onBack}) {
-  const [formData, setFormData] = useState(dummyCandidate);
+export default function EditCandidateProfile({ onBack }) {
+  const { authData } = useAuth();
+  const [formData, setFormData] = useState(() => buildInitialFormData(authData));
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,7 +37,7 @@ export default function EditCandidateProfile({onBack}) {
     }));
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
 
     if (!formData.phoneNumber || !formData.address || !formData.city || !formData.state || !formData.zipCode || !formData.country) {
@@ -44,16 +45,40 @@ export default function EditCandidateProfile({onBack}) {
       return;
     }
 
+    if (!formData.candidateId) {
+      setErrorMessage("Unable to determine candidate ID. Please log in again.");
+      return;
+    }
+
+    setSaving(true);
+    setSuccessMessage("");
+    setErrorMessage("");
+
+    // NOTE: resume / eadDocument / drivingLicense are intentionally NOT
+    // sent here. Uploading files requires the separate presign/confirm
+    // upload endpoints — that's a different feature, not wired yet.
     const payload = {
-      ...formData,
-      status: "UPDATED",
-      updatedAt: new Date().toISOString(),
+      phoneNumber: formData.phoneNumber,
+      address: formData.address,
+      city: formData.city,
+      state: formData.state,
+      zipCode: formData.zipCode,
+      country: formData.country,
     };
 
-    console.log(`PUT /api/candidates/${formData.candidateId}/profile`, payload);
+    try {
+      await apiFetch(`${API.candidates}/${formData.candidateId}/profile`, {
+        method: "PUT",
+        auth: true,
+        body: payload,
+      });
 
-    setFormData(payload);
-    setSuccessMessage("Profile updated successfully.");
+      setSuccessMessage("Profile updated successfully.");
+    } catch (err) {
+      setErrorMessage(err.message || "Failed to update profile. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -74,6 +99,7 @@ export default function EditCandidateProfile({onBack}) {
         <h2>Edit Candidate Profile</h2>
 
       {successMessage && <p className="success-message">{successMessage}</p>}
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
 
       <form onSubmit={handleSave} className="candidate-form">
         <label>Candidate ID</label>
@@ -109,7 +135,7 @@ export default function EditCandidateProfile({onBack}) {
         <label>Replace Driving License</label>
         <input name="drivingLicense" type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileChange} />
 
-        <button type="submit">Save Profile</button>
+        <button type="submit" disabled={saving}>{saving ? "Saving..." : "Save Profile"}</button>
       </form>
     </div>
   );
